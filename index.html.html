@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram Content Strategy | Traction Studios</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --navy: #0D1B2A;
+    --ink: #1A2B3C;
+    --electric: #00C6FF;
+    --cyan-glow: #0ED2F7;
+    --orange: #FF6B35;
+    --gold: #F9C74F;
+    --green: #43D98C;
+    --purple: #8B5CF6;
+    --rose: #F472B6;
+    --card: #162030;
+    --border: rgba(0,198,255,0.15);
+    --text: #E8F4F8;
+    --muted: #7A9BB5;
+    --white: #ffffff;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--navy);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,198,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,198,255,0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none; z-index: 0;
+  }
+  .container { max-width: 1060px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+
+  /* HERO */
+  .hero {
+    min-height: 92vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 80px 0 60px; position: relative; overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute; right: -100px; top: 50%; transform: translateY(-50%);
+    width: 550px; height: 550px;
+    background: radial-gradient(circle, rgba(0,198,255,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace; font-size: 11px;
+    letter-spacing: 0.2em; color: var(--electric);
+    border: 1px solid var(--border); padding: 8px 18px;
+    border-radius: 2px; margin-bottom: 28px;
+    text-transform: uppercase;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(48px, 6.5vw, 88px);
+    font-weight: 900; line-height: 1.0; margin-bottom: 12px;
+    animation: fadeUp 0.7s ease 0.1s both;
+  }
+  .hero h1 span { display: block; -webkit-text-stroke: 2px var(--electric); color: transparent; }
+  .hero-sub {
+    font-size: 16px; color: var(--muted); max-width: 480px;
+    margin-bottom: 44px; font-weight: 300;
+    animation: fadeUp 0.7s ease 0.2s both;
+  }
+  .hero-stats { display: flex; gap: 44px; animation: fadeUp 0.7s ease 0.3s both; flex-wrap: wrap; }
+  .hs { border-left: 3px solid var(--electric); padding-left: 14px; }
+  .hs-num { font-family: 'Space Mono', monospace; font-size: 30px; font-weight: 700; color: var(--electric); display: block; }
+  .hs-lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  /* SECTIONS */
+  .sec { padding: 80px 0; }
+  .sec-hd { margin-bottom: 44px; }
+  .sec-num { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--electric); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 10px; display: block; }
+  .sec-title { font-family: 'Playfair Display', serif; font-size: clamp(28px, 3.5vw, 46px); font-weight: 700; line-height: 1.1; color: var(--white); }
+  .sec-title em { color: var(--electric); font-style: normal; }
+  .sec-desc { color: var(--muted); max-width: 560px; margin-top: 12px; font-size: 15px; }
+
+  .divider { height: 1px; background: linear-gradient(to right, var(--electric), transparent); opacity: 0.25; }
+
+  /* CARDS */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 28px; transition: border-color 0.3s, transform 0.3s; position: relative; overflow: hidden; }
+  .card:hover { border-color: rgba(0,198,255,0.4); transform: translateY(-2px); }
+  .card::before { content:''; position:absolute; top:0;left:0;right:0; height:3px; background:linear-gradient(90deg,var(--electric),var(--cyan-glow)); opacity:0; transition:opacity 0.3s; }
+  .card:hover::before { opacity:1; }
+
+  /* GRIDS */
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .g4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; }
+
+  /* STAT CARDS */
+  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 22px; text-align: center; position: relative; overflow: hidden; }
+  .stat-card::after { content:''; position:absolute; bottom:0;left:0;right:0; height:3px; }
+  .sc1::after{background:var(--electric);} .sc2::after{background:var(--orange);} .sc3::after{background:var(--gold);} .sc4::after{background:var(--green);}
+  .sc5::after{background:var(--purple);} .sc6::after{background:var(--rose);}
+  .sn { font-family:'Space Mono',monospace; font-size:34px; font-weight:700; color:var(--white); display:block; margin-bottom:6px; }
+  .sl { font-size:12px; color:var(--muted); line-height:1.4; }
+
+  /* PAGE CARDS */
+  .page-icon { width:44px;height:44px; background:linear-gradient(135deg,var(--electric),var(--purple)); border-radius:4px; display:flex;align-items:center;justify-content:center; font-size:18px; margin-bottom:14px; }
+  .page-name { font-family:'Playfair Display',serif; font-size:17px; font-weight:700; color:var(--white); margin-bottom:4px; }
+  .page-handle { font-family:'Space Mono',monospace; font-size:10px; color:var(--electric); margin-bottom:14px; letter-spacing:0.05em; }
+  .page-flw { font-family:'Space Mono',monospace; font-size:24px; font-weight:700; color:var(--gold); display:block; margin-bottom:2px; }
+  .page-flw-lbl { font-size:11px; color:var(--muted); margin-bottom:14px; }
+  .ilist { list-style:none; display:flex; flex-direction:column; gap:7px; }
+  .ilist li { font-size:13px; color:var(--muted); padding-left:14px; position:relative; line-height:1.5; }
+  .ilist li::before { content:'→'; position:absolute; left:0; color:var(--electric); font-size:11px; top:1px; }
+
+  /* CHART CARDS */
+  .chart-card { background:var(--card); border:1px solid var(--border); border-radius:4px; padding:26px; }
+  .ct { font-family:'Space Mono',monospace; font-size:10px; color:var(--electric); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:4px; }
+  .cs { font-family:'Playfair Display',serif; font-size:17px; color:var(--white); margin-bottom:20px; }
+  .ch { position:relative; height:268px; }
+  .ch-sm { position:relative; height:210px; }
+
+  /* CHECKBOX BUCKETS */
+  .bucket-list { display:flex; flex-direction:column; gap:9px; }
+  .bucket-item {
+    display:grid; grid-template-columns: 26px 1fr auto;
+    align-items:start; gap:14px;
+    background:var(--card); border:1px solid var(--border);
+    border-radius:4px; padding:16px 18px;
+    transition: border-color 0.25s;
+  }
+  .bucket-item:hover { border-color: rgba(0,198,255,0.35); }
+  .cb-box {
+    width:20px; height:20px;
+    border:2px solid var(--electric);
+    border-radius:3px; display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .cb-box svg { width:12px; height:12px; stroke:var(--electric); stroke-width:2.5; fill:none; }
+  .cb-main { display:flex; flex-direction:column; gap:2px; }
+  .cb-title { font-size:14px; font-weight:600; color:var(--white); display:flex; align-items:center; gap:7px; }
+  .cb-title span { font-size:15px; }
+  .cb-desc { font-size:13px; color:var(--muted); line-height:1.6; margin-top:4px; }
+  .cb-badge {
+    font-family:'Space Mono',monospace; font-size:10px;
+    color:var(--electric); border:1px solid rgba(0,198,255,0.25);
+    background:rgba(0,198,255,0.07); padding:4px 10px; border-radius:2px;
+    white-space:nowrap; flex-shrink:0;
+  }
+
+  /* WEEK GRID */
+  .week-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:12px; }
+  .day-card { background:var(--card); border:1px solid var(--border); border-radius:4px; padding:16px 10px; text-align:center; transition:transform 0.3s,border-color 0.3s; }
+  .day-card:hover { transform:translateY(-4px); border-color:rgba(0,198,255,0.4); }
+  .day-name { font-family:'Space Mono',monospace; font-size:9px; text-transform:uppercase; letter-spacing:0.12em; color:var(--electric); margin-bottom:9px; }
+  .day-emoji { font-size:22px; display:block; margin-bottom:7px; }
+  .day-bucket { font-size:11px; font-weight:600; color:var(--white); margin-bottom:4px; line-height:1.3; }
+  .day-format { font-size:10px; color:var(--muted); }
+  .day-goal { font-size:10px; color:var(--gold); margin-top:5px; }
+
+  /* CALLOUT */
+  .callout { background:linear-gradient(135deg,rgba(0,198,255,0.07),rgba(139,92,246,0.04)); border:1px solid rgba(0,198,255,0.18); border-left:4px solid var(--electric); border-radius:4px; padding:18px 22px; margin-top:24px; }
+  .callout-title { font-weight:700; color:var(--electric); margin-bottom:4px; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; }
+  .callout p { color:var(--text); font-size:14px; }
+
+  /* HASHTAG */
+  .htag-cloud { display:flex; flex-wrap:wrap; gap:7px; }
+  .htag { padding:5px 12px; border-radius:2px; font-family:'Space Mono',monospace; font-size:10px; border:1px solid; transition:transform 0.2s; cursor:default; }
+  .htag:hover { transform:scale(1.05); }
+  .ht-b { background:rgba(0,198,255,0.07); border-color:rgba(0,198,255,0.28); color:var(--electric); }
+  .ht-o { background:rgba(255,107,53,0.07); border-color:rgba(255,107,53,0.28); color:var(--orange); }
+  .ht-g { background:rgba(67,217,140,0.07); border-color:rgba(67,217,140,0.28); color:var(--green); }
+  .ht-p { background:rgba(139,92,246,0.07); border-color:rgba(139,92,246,0.28); color:var(--purple); }
+
+  /* FORMAT BARS */
+  .fbar-list { display:flex; flex-direction:column; gap:16px; }
+  .fbar-hd { display:flex; justify-content:space-between; margin-bottom:6px; }
+  .fbar-name { font-size:13px; font-weight:600; color:var(--white); }
+  .fbar-pct { font-family:'Space Mono',monospace; font-size:13px; color:var(--electric); }
+  .fbar-bg { height:7px; background:rgba(255,255,255,0.06); border-radius:4px; overflow:hidden; }
+  .fbar-fill { height:100%; border-radius:4px; transition:width 1.4s cubic-bezier(0.16,1,0.3,1); }
+  .fbar-note { font-size:11px; color:var(--muted); margin-top:3px; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+  .reveal { opacity:0; transform:translateY(26px); transition:opacity 0.65s ease, transform 0.65s ease; }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+
+  /* FOOTER */
+  .footer { border-top:1px solid var(--border); padding:36px 0; text-align:center; }
+  .footer p { font-family:'Space Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:0.12em; }
+
+  @media(max-width:860px){
+    .g2,.g3 { grid-template-columns:1fr; }
+    .g4 { grid-template-columns:1fr 1fr; }
+    .week-grid { grid-template-columns:repeat(4,1fr); }
+  }
+  @media(max-width:540px){
+    .g4 { grid-template-columns:1fr; }
+    .bucket-item { grid-template-columns: 26px 1fr; }
+    .cb-badge { display:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <span class="hero-tag">Instagram Content Strategy | Traction Studios</span>
+    <h1>
+      Instagram Content
+      <span>Bucket List</span>
+    </h1>
+    <p class="hero-sub">Research-backed Instagram content plan for a Dubai-based digital marketing agency — performance marketing &amp; SEO.</p>
+    <div class="hero-stats">
+      <div class="hs"><span class="hs-num">8</span><span class="hs-lbl">Content Buckets</span></div>
+      <div class="hs"><span class="hs-num">3</span><span class="hs-lbl">Pages Researched</span></div>
+      <div class="hs"><span class="hs-num">7</span><span class="hs-lbl">Posts / Week</span></div>
+      <div class="hs"><span class="hs-num">AED</span><span class="hs-lbl">Market Currency</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 00 KEY NUMBERS -->
+<section class="sec reveal">
+  <div class="container">
+    <div class="sec-hd">
+      <span class="sec-num">00 — Key Numbers</span>
+      <h2 class="sec-title">Dubai Market <em>at a Glance</em></h2>
+    </div>
+    <div class="g4" style="margin-bottom:16px;">
+      <div class="stat-card sc1">
+        <span class="sn">AED ~9.7B</span>
+        <span class="sl">UAE digital ad market in 2026 — one of the fastest-growing in MENA</span>
+      </div>
+      <div class="stat-card sc2">
+        <span class="sn">68%</span>
+        <span class="sl">of online experiences start with a search engine — SEO is non-negotiable</span>
+      </div>
+      <div class="stat-card sc3">
+        <span class="sn">40%</span>
+        <span class="sl">of UAE Gen Z searches Instagram before Google — platform intent is shifting</span>
+      </div>
+      <div class="stat-card sc4">
+        <span class="sn">3×</span>
+        <span class="sl">more engagement on carousel posts vs. single image posts on Instagram</span>
+      </div>
+    </div>
+    <div class="g4">
+      <div class="stat-card sc5">
+        <span class="sn">0.55%</span>
+        <span class="sl">average carousel engagement rate — highest Instagram format in 2025</span>
+      </div>
+      <div class="stat-card sc6">
+        <span class="sn">55%</span>
+        <span class="sl">more website traffic for businesses that publish consistent content</span>
+      </div>
+      <div class="stat-card sc1">
+        <span class="sn">2M+</span>
+        <span class="sl">followers on Marketing Mind — benchmark for educational content growth</span>
+      </div>
+      <div class="stat-card sc2">
+        <span class="sn">60%</span>
+        <span class="sl">CPL reduction possible through optimised performance marketing in Dubai (An agency estimate)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 01 PAGE RESEARCH -->
+<section class="sec reveal">
+  <div class="container">
+    <div class="sec-hd">
+      <span class="sec-num">01 — Page Research</span>
+      <h2 class="sec-title">3 Pages. <em>What Works.</em></h2>
+      <p class="sec-desc">Patterns from Mad Over Marketing, Marketing Mind, and Brands of India — adapted for the Dubai &amp; UAE market.</p>
+    </div>
+
+    <div class="g3">
+      <div class="card">
+        <div class="page-icon">📣</div>
+        <div class="page-name">Mad Over Marketing</div>
+        <div class="page-handle">@madovermarketing_mom</div>
+        <span class="page-flw">1.4M</span>
+        <div class="page-flw-lbl">Followers · Brand Campaign Niche</div>
+        <ul class="ilist">
+          <li>"Why this ad worked" campaign breakdown carousels</li>
+          <li>Brand vs. brand comparison posts — huge shares</li>
+          <li>Consumer psychology hooks (5 triggers brands use)</li>
+          <li>Marketer memes &amp; relatable agency humor</li>
+          <li>Real-time newsjacking on viral brand moments</li>
+        </ul>
+      </div>
+
+      <div class="card" style="border-color:rgba(249,199,79,0.2);">
+        <div class="page-icon" style="background:linear-gradient(135deg,#F9C74F,#FF6B35);">🧠</div>
+        <div class="page-name">Marketing Mind</div>
+        <div class="page-handle">@marketingmind.in</div>
+        <span class="page-flw" style="color:var(--orange);">1.6M</span>
+        <div class="page-flw-lbl">Followers · Marketing News &amp; Data</div>
+        <ul class="ilist">
+          <li>Weekly "campaigns that broke the internet" carousels</li>
+          <li>Bold stat posts — single number + one insight</li>
+          <li>"The story of [Brand]" origin series — massive saves</li>
+          <li>Free tool roundups — most saved content type</li>
+          <li>Short Reels with one sharp insight per video</li>
+        </ul>
+      </div>
+
+      <div class="card" style="border-color:rgba(67,217,140,0.2);">
+        <div class="page-icon" style="background:linear-gradient(135deg,#43D98C,#00C6FF);">🌍</div>
+        <div class="page-name">Because of Marketing</div>
+        <div class="page-handle">@becauseofmarketing</div>
+        <span class="page-flw" style="color:var(--green);">297K</span>
+        <div class="page-flw-lbl">Followers · Global Campaigns &amp; Creative Advertising</div>
+        <ul class="ilist">
+          <li>Curated OOH (out-of-home) ads from around the world — always jaw-dropping</li>
+          <li>Brilliant packaging design posts that reframe what branding can be</li>
+          <li>Out-of-the-box campaign breakdowns with zero fluff — just the idea and why it works</li>
+          <li>Global brand creativity shown through simple, clean carousel presentation</li>
+          <li>Acts like a global M.O.M — proof that great marketing transcends borders</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">🔑 Key Pattern</div>
+      <p>All 3 pages share the same system: <strong>Educate → Prove → Entertain.</strong> Carousels build authority, case studies build trust, and humor expands reach.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 02 CHARTS -->
+<section class="sec reveal">
+  <div class="container">
+    <div class="sec-hd">
+      <span class="sec-num">02 — Data Visualization</span>
+      <h2 class="sec-title">Content Performance <em>by Numbers</em></h2>
+    </div>
+
+    <div class="g2" style="margin-bottom:22px;">
+      <div class="chart-card">
+        <div class="ct">Format Mix</div>
+        <div class="cs">Recommended Post Format Split</div>
+        <div class="ch"><canvas id="formatPie"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="ct">Engagement Benchmark</div>
+        <div class="cs">Avg. Engagement Rate by Format</div>
+        <div class="ch"><canvas id="engBar"></canvas></div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="chart-card">
+        <div class="ct">UAE Ad Spend</div>
+        <div class="cs">Digital Budget by Platform (UAE 2026)</div>
+        <div class="ch"><canvas id="adPie"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="ct">Page Strength</div>
+        <div class="cs">Content Strategy Radar — 3 Pages</div>
+        <div class="ch"><canvas id="radar"></canvas></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 03 CONTENT BUCKETS -->
+<section class="sec reveal">
+  <div class="container">
+    <div class="sec-hd">
+      <span class="sec-num">03 — Content Buckets</span>
+      <h2 class="sec-title">Instagram Content <em>Bucket List</em></h2>
+    </div>
+
+    <div class="bucket-list">
+
+      <div class="bucket-item">
+        <div class="cb-box"><svg viewBox="0 0 12 12"><polyline points="1,6 4.5,9.5 11,2"/></svg></div>
+        <div class="cb-main">
+          <div class="cb-title"><span>🎓</span> Education &amp; Insights</div>
+          <div class="cb-desc">Teach your audience something actionable about digital marketing. Break down SEO concepts, explain how Google Ads work, or demystify Meta's algorithm — all through the lens of the UAE market. Posts like "Why your Google Ads cost more in Dubai" or a step-by-step campaign setup guide build long-term authority and get saved repeatedly.</div>
+        </div>
+        <div class="cb-badge">3× / week · Carousel</div>
+      </div>
+
+      <div class="bucket-item">
+        <div class="cb-box"><svg viewBox="0 0 12 12"><polyline points="1,6 4.5,9.5 11,2"/></svg></div>
+        <div class="cb-main">
+          <div class="cb-title"><span>📊</span> Data &amp; Stats</div>
+          <div class="cb-desc">Lead with a bold number that stops the scroll, then give it context. The UAE digital ad market is worth AED 18B — that's a hook. Stats like "68% of online experiences start with search" or Gulf-specific ROAS benchmarks make followers stop, screenshot, and share. One stat, one insight, one strong visual is all you need.</div>
+        </div>
+        <div class="cb-badge">2× / week · Single Image</div>
+      </div>
+
+      <div class="bucket-item">
+        <div class="cb-box"><svg viewBox="0 0 12 12"><polyline points="1,6 4.5,9.5 11,2"/></svg></div>
+        <div class="cb-main">
+          <div class="cb-title"><span>🏆</span> Case Studies &amp; Results</div>
+          <div class="cb-desc">Nothing converts a potential client faster than proof. Show the before and after — CPL dropped from AED 80 to AED 30, a Dubai F&amp;B brand going from AED 5K to AED 30K ROAS, or a local brand climbing from Page 7 to Page 1 in 90 days. Anonymised or consented, real numbers tell the story no caption can.</div>
+        </div>
+        <div class="cb-badge">1–2× / week · Carousel</div>
+      </div>
+
+      <div class="bucket-item">
+        <div class="cb-box"><svg viewBox="0 0 12 12"><polyline points="1,6 4.5,9.5 11,2"/></svg></div>
+        <div class="cb-main">
+          <div class="cb-title"><span>🔧</span> Tools &amp; Resources</div>
+          <div class="cb-desc">Curated tool and resource posts are among the most saved content type on Instagram. Round up the best free SEO tools, recommend landing page builders that support Arabic and English, or share Google Ads scripts that save hours of manual work. These posts position the agency as genuinely helpful — not just promotional.</div>
+        </div>
+        <div class="cb-badge">1× / week · Carousel</div>
+      </div>
+
+      <div class="bucket-item">
+        <div class="cb-box"><svg viewBox="0 0 12 12"><polyline points="1,6 4.5,9.5 11,2"/></svg></div>
+        <div class="cb-main">
+          <div class="cb-title"><span>🧠</span> Thought Leadership</div>
+          <div class="cb-desc">Share opinions, not just information. Push back on common myths — "Most UAE brands don't need more traffic, they need better conversion" is a post that sparks debate and earns followers. Talk about what managing AED 1M in ad spend actually taught you, or make bold predictions about where MENA digital marketing is heading in 2026 and beyond.</div>
+        </div>
+        <div class="cb-badge">2× / week · Reel</div>
+      </div>
+
+      <div class="bucket-item">
+        <div class="cb-box"><svg viewBox="0 0 12 12"><polyline points="1,6 4.5,9.5 11,2"/></svg></div>
+        <div class="cb-main">
+          <div class="cb-title"><span>😄</span> Relatable &amp; Humor</div>
+          <div class="cb-desc">Humor is the fastest way to get shared by people who've never heard of you. Lean into the everyday frustrations of agency life — clients wanting to go viral on an AED 500 budget, explaining SEO to someone who just wants to rank #1 by tomorrow, or the chaos of a campaign launch day. If marketers in Dubai see themselves in the post, they'll tag someone.</div>
+        </div>
+        <div class="cb-badge">2× / week · Single Image</div>
+      </div>
+
+      <div class="bucket-item">
+        <div class="cb-box"><svg viewBox="0 0 12 12"><polyline points="1,6 4.5,9.5 11,2"/></svg></div>
+        <div class="cb-main">
+          <div class="cb-title"><span>🌟</span> Behind the Scenes</div>
+          <div class="cb-desc">People don't just hire agencies — they hire people. BTS content humanises the brand and makes it feel real. Show how a campaign goes from client brief to live ads, introduce the team, or capture that unscripted moment when a campaign launches and everyone's watching the dashboard refresh. Authenticity here builds more trust than any polished post.</div>
+        </div>
+        <div class="cb-badge">2× / week · Reel + Story</div>
+      </div>
+
+      <div class="bucket-item">
+        <div class="cb-box"><svg viewBox="0 0 12 12"><polyline points="1,6 4.5,9.5 11,2"/></svg></div>
+        <div class="cb-main">
+          <div class="cb-title"><span>📣</span> Brand &amp; Services</div>
+          <div class="cb-desc">Keep service posts benefit-led, not feature-led. Instead of listing what the agency does, show what the client gets — lower CPL, higher ROAS, more qualified leads. A free Google Ads audit CTA in Stories, a carousel breaking down a performance marketing package in AED, or a post on why Dubai brands switch agencies are all strong ways to drive inbound without being pushy.</div>
+        </div>
+        <div class="cb-badge">1× / week · Carousel</div>
+      </div>
+
+    </div>
+
+    <div class="chart-card" style="margin-top:24px;">
+      <div class="ct">Monthly Volume</div>
+      <div class="cs">Projected Posts per Month by Bucket</div>
+      <div class="ch"><canvas id="monthBar"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 04 FORMAT GUIDE -->
+<section class="sec reveal">
+  <div class="container">
+    <div class="sec-hd">
+      <span class="sec-num">04 — Format Guide</span>
+      <h2 class="sec-title">Post Formats &amp; <em>Best Practices</em></h2>
+    </div>
+
+    <div class="g2">
+      <div>
+        <div class="fbar-list" style="margin-bottom:22px;">
+          <div>
+            <div class="fbar-hd"><span class="fbar-name">🎠 Carousels</span><span class="fbar-pct">95%</span></div>
+            <div class="fbar-bg"><div class="fbar-fill" style="width:0%;background:linear-gradient(90deg,#00C6FF,#0ED2F7);" data-target="95"></div></div>
+            <div class="fbar-note">7–10 slides. Hook on slide 1–2. End with a save / share CTA.</div>
+          </div>
+          <div>
+            <div class="fbar-hd"><span class="fbar-name">🎬 Reels</span><span class="fbar-pct">90%</span></div>
+            <div class="fbar-bg"><div class="fbar-fill" style="width:0%;background:linear-gradient(90deg,#FF6B35,#F9C74F);" data-target="90"></div></div>
+            <div class="fbar-note">Under 30 sec. Hook in first 2 seconds. Add captions — most watch without sound.</div>
+          </div>
+          <div>
+            <div class="fbar-hd"><span class="fbar-name">📱 Stories</span><span class="fbar-pct">78%</span></div>
+            <div class="fbar-bg"><div class="fbar-fill" style="width:0%;background:linear-gradient(90deg,#43D98C,#00C6FF);" data-target="78"></div></div>
+            <div class="fbar-note">3–5/day. Use polls, questions &amp; CTAs. Best format for DMs &amp; leads.</div>
+          </div>
+          <div>
+            <div class="fbar-hd"><span class="fbar-name">🖼️ Single Image</span><span class="fbar-pct">62%</span></div>
+            <div class="fbar-bg"><div class="fbar-fill" style="width:0%;background:linear-gradient(90deg,#8B5CF6,#F472B6);" data-target="62"></div></div>
+            <div class="fbar-note">Best for memes, stat posts, quotes. High shares, lower saves.</div>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:0;">
+          <div class="callout-title">🇦🇪 Dubai-Specific Tips</div>
+          <p>Best posting times: <strong>8–10 AM GST</strong> and <strong>7–9 PM GST.</strong> Friday is the highest-engagement day in UAE. Bilingual captions (English + Arabic keywords) improve local Explore discoverability. Ramadan content spikes 35% in MENA — plan 2 weeks ahead.</p>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div class="chart-card">
+          <div class="ct">Optimal Carousel Length</div>
+          <div class="cs">Engagement by Slide Count</div>
+          <div class="ch-sm"><canvas id="slidesBar"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="ct">Weekly Frequency</div>
+          <div class="cs">Posts per Week by Bucket</div>
+          <div class="ch-sm"><canvas id="freqBar"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 05 WEEKLY SCHEDULE -->
+<section class="sec reveal">
+  <div class="container">
+    <div class="sec-hd">
+      <span class="sec-num">05 — Weekly Cadence</span>
+      <h2 class="sec-title">7 Days. <em>7 Posts.</em></h2>
+      <p class="sec-desc">Built around the UAE work week (Sunday–Thursday) with weekend content timed for personal browsing.</p>
+    </div>
+
+    <div class="week-grid">
+      <div class="day-card">
+        <div class="day-name">Sun</div>
+        <span class="day-emoji">🎓</span>
+        <div class="day-bucket">Education &amp; Insights</div>
+        <div class="day-format">Carousel</div>
+        <div class="day-goal">Authority &amp; Saves</div>
+      </div>
+      <div class="day-card">
+        <div class="day-name">Mon</div>
+        <span class="day-emoji">📊</span>
+        <div class="day-bucket">Data &amp; Stats</div>
+        <div class="day-format">Single Image</div>
+        <div class="day-goal">Reach &amp; Shares</div>
+      </div>
+      <div class="day-card">
+        <div class="day-name">Tue</div>
+        <span class="day-emoji">🏆</span>
+        <div class="day-bucket">Case Study</div>
+        <div class="day-format">Carousel</div>
+        <div class="day-goal">Trust &amp; Leads</div>
+      </div>
+      <div class="day-card">
+        <div class="day-name">Wed</div>
+        <span class="day-emoji">🧠</span>
+        <div class="day-bucket">Thought Leadership</div>
+        <div class="day-format">Reel</div>
+        <div class="day-goal">Brand Voice</div>
+      </div>
+      <div class="day-card">
+        <div class="day-name">Thu</div>
+        <span class="day-emoji">😄</span>
+        <div class="day-bucket">Humor &amp; Relatable</div>
+        <div class="day-format">Single Image</div>
+        <div class="day-goal">Shares &amp; Reach</div>
+      </div>
+      <div class="day-card">
+        <div class="day-name">Fri</div>
+        <span class="day-emoji">🌟</span>
+        <div class="day-bucket">Behind the Scenes</div>
+        <div class="day-format">Reel + Story</div>
+        <div class="day-goal">Community</div>
+      </div>
+      <div class="day-card">
+        <div class="day-name">Sat</div>
+        <span class="day-emoji">🔧</span>
+        <div class="day-bucket">Tools &amp; Resources</div>
+        <div class="day-format">Carousel</div>
+        <div class="day-goal">Saves &amp; Trust</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">📅 UAE Work Week</div>
+      <p>The UAE week runs <strong>Sunday–Thursday.</strong> Post high-effort content (carousels, case studies) on Sunday and Tuesday when professional engagement peaks. Friday &amp; Saturday — personal browsing hours — are ideal for BTS and humor posts.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 06 HASHTAGS -->
+<section class="sec reveal">
+  <div class="container">
+    <div class="sec-hd">
+      <span class="sec-num">06 — Hashtag Strategy</span>
+      <h2 class="sec-title">Discover. <em>Rank. Reach.</em></h2>
+      <p class="sec-desc">5–15 tags per post. Mix niche, mid-size, and location tags. UAE-localized hashtags improve Explore visibility in the Gulf.</p>
+    </div>
+
+    <div class="g2">
+      <div class="chart-card">
+        <div class="ct">Tag Type Mix</div>
+        <div class="cs">Hashtag Distribution per Post</div>
+        <div class="ch"><canvas id="hashPie"></canvas></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:18px;justify-content:center;">
+        <div>
+          <p style="font-family:'Space Mono',monospace;font-size:10px;color:var(--electric);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:9px;">Performance Marketing</p>
+          <div class="htag-cloud">
+            <span class="htag ht-b">#PerformanceMarketing</span>
+            <span class="htag ht-b">#GoogleAdsDubai</span>
+            <span class="htag ht-b">#MetaAdsDubai</span>
+            <span class="htag ht-b">#ROASOptimization</span>
+            <span class="htag ht-b">#PPCDubai</span>
+          </div>
+        </div>
+        <div>
+          <p style="font-family:'Space Mono',monospace;font-size:10px;color:var(--orange);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:9px;">SEO</p>
+          <div class="htag-cloud">
+            <span class="htag ht-o">#SEODubai</span>
+            <span class="htag ht-o">#SEOuae</span>
+            <span class="htag ht-o">#OrganicTraffic</span>
+            <span class="htag ht-o">#TechnicalSEO</span>
+            <span class="htag ht-o">#ContentMarketing</span>
+          </div>
+        </div>
+        <div>
+          <p style="font-family:'Space Mono',monospace;font-size:10px;color:var(--green);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:9px;">Dubai / UAE</p>
+          <div class="htag-cloud">
+            <span class="htag ht-g">#DubaiMarketing</span>
+            <span class="htag ht-g">#UAEBusiness</span>
+            <span class="htag ht-g">#DigitalMarketingDubai</span>
+            <span class="htag ht-g">#MENAMarketing</span>
+            <span class="htag ht-g">#DubaiStartups</span>
+          </div>
+        </div>
+        <div>
+          <p style="font-family:'Space Mono',monospace;font-size:10px;color:var(--purple);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:9px;">Agency &amp; Community</p>
+          <div class="htag-cloud">
+            <span class="htag ht-p">#MarketingAgencyDubai</span>
+            <span class="htag ht-p">#AgencyLife</span>
+            <span class="htag ht-p">#MarketingTips</span>
+            <span class="htag ht-p">#GrowthMarketing</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <p>Instagram Content Strategy · Traction Studios · Dubai, UAE · 2026</p>
+  </div>
+</footer>
+
+<script>
+  Chart.defaults.color = '#7A9BB5';
+  Chart.defaults.font.family = "'DM Sans', sans-serif";
+  Chart.defaults.plugins.legend.labels.boxWidth = 12;
+  Chart.defaults.plugins.legend.labels.padding = 14;
+
+  const C = { blue:'#00C6FF', orange:'#FF6B35', gold:'#F9C74F', green:'#43D98C', purple:'#8B5CF6', rose:'#F472B6', cyan:'#0ED2F7' };
+  const BG = '#162030';
+
+  new Chart(document.getElementById('formatPie'), {
+    type:'doughnut',
+    data:{ labels:['Carousel','Reels','Stories','Single Image'], datasets:[{ data:[40,30,20,10], backgroundColor:[C.blue,C.orange,C.green,C.purple], borderColor:BG, borderWidth:3, hoverOffset:6 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label:c=>` ${c.label}: ${c.parsed}%` } } }, cutout:'60%' }
+  });
+
+  new Chart(document.getElementById('engBar'), {
+    type:'bar',
+    data:{ labels:['Carousels','Reels','Stories','Single Image'], datasets:[{ label:'Avg Engagement %', data:[0.55,0.42,0.35,0.21], backgroundColor:[C.blue,C.orange,C.green,C.purple], borderRadius:4, borderSkipped:false }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true, grid:{ color:'rgba(255,255,255,0.05)' }, ticks:{ callback:v=>v+'%' } }, x:{ grid:{ display:false } } } }
+  });
+
+  new Chart(document.getElementById('adPie'), {
+    type:'doughnut',
+    data:{ labels:['Google Ads','Meta (FB/IG)','YouTube','Snapchat/TikTok','Other'], datasets:[{ data:[36,30,18,10,6], backgroundColor:[C.gold,C.blue,C.orange,C.purple,C.cyan], borderColor:BG, borderWidth:3, hoverOffset:6 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label:c=>` ${c.label}: ${c.parsed}%` } } }, cutout:'55%' }
+  });
+
+  new Chart(document.getElementById('radar'), {
+    type:'radar',
+    data:{
+      labels:['Educational','Viral/Shares','Case Studies','Humor','Data-Led','Thought Lead.'],
+      datasets:[
+        { label:'Mad Over Marketing', data:[72,92,58,95,62,68], borderColor:C.blue, backgroundColor:'rgba(0,198,255,0.1)', pointBackgroundColor:C.blue, borderWidth:2 },
+        { label:'Marketing Mind', data:[88,78,68,58,92,72], borderColor:C.gold, backgroundColor:'rgba(249,199,79,0.08)', pointBackgroundColor:C.gold, borderWidth:2 },
+        { label:'Because of Marketing', data:[80,68,95,48,72,88], borderColor:C.green, backgroundColor:'rgba(67,217,140,0.08)', pointBackgroundColor:C.green, borderWidth:2 },
+      ]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom' } }, scales:{ r:{ beginAtZero:true, max:100, grid:{ color:'rgba(255,255,255,0.06)' }, angleLines:{ color:'rgba(255,255,255,0.05)' }, ticks:{ display:false }, pointLabels:{ font:{ size:10 }, color:'#7A9BB5' } } } }
+  });
+
+  new Chart(document.getElementById('monthBar'), {
+    type:'bar',
+    data:{ labels:['Education','Data & Stats','Case Studies','Tools','Thought Lead.','Humor','BTS','Brand/Services'], datasets:[{ label:'Posts/Month', data:[12,8,6,4,8,8,8,4], backgroundColor:[C.blue,C.cyan,C.gold,C.orange,C.purple,C.rose,C.green,C.blue], borderRadius:4, borderSkipped:false }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true, grid:{ color:'rgba(255,255,255,0.05)' }, title:{ display:true, text:'Posts / Month', color:'#7A9BB5', font:{ size:11 } } }, x:{ grid:{ display:false }, ticks:{ font:{ size:11 } } } } }
+  });
+
+  new Chart(document.getElementById('slidesBar'), {
+    type:'bar',
+    data:{ labels:['3–4','5–6','7–8','9–10','11–12','13+'], datasets:[{ label:'Engagement Score', data:[42,62,95,88,68,46], backgroundColor:(c)=>{ const i=c.dataIndex; return (i===2||i===3)?C.blue:'rgba(0,198,255,0.28)'; }, borderRadius:4, borderSkipped:false }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true, grid:{ color:'rgba(255,255,255,0.05)' }, title:{ display:true, text:'Engagement', color:'#7A9BB5', font:{size:10} } }, x:{ grid:{ display:false }, title:{ display:true, text:'Slides', color:'#7A9BB5', font:{size:10} } } } }
+  });
+
+  new Chart(document.getElementById('freqBar'), {
+    type:'bar',
+    data:{ labels:['Education','Data','Cases','Tools','Thought','Humor','BTS','Brand'], datasets:[{ label:'Posts/Week', data:[3,2,1.5,1,2,2,2,1], backgroundColor:[C.blue,C.cyan,C.gold,C.orange,C.purple,C.rose,C.green,C.blue], borderRadius:4, borderSkipped:false }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true, grid:{ color:'rgba(255,255,255,0.05)' }, ticks:{ stepSize:0.5 } }, x:{ grid:{ display:false }, ticks:{ font:{size:10} } } } }
+  });
+
+  new Chart(document.getElementById('hashPie'), {
+    type:'doughnut',
+    data:{ labels:['Niche / Local Tags','Mid-Size Industry','Broad Tags','Branded'], datasets:[{ data:[35,35,20,10], backgroundColor:[C.green,C.blue,C.orange,C.gold], borderColor:BG, borderWidth:3, hoverOffset:5 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom' } }, cutout:'55%' }
+  });
+
+  // Scroll reveal
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold:0.07 });
+  document.querySelectorAll('.reveal').forEach(r => obs.observe(r));
+
+  // Animated format bars
+  const barObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.querySelectorAll('.fbar-fill').forEach(b => { b.style.width = b.dataset.target + '%'; });
+        barObs.unobserve(e.target);
+      }
+    });
+  }, { threshold:0.3 });
+  document.querySelectorAll('.fbar-list').forEach(el => barObs.observe(el));
+</script>
+</body>
+</html>
